@@ -1,0 +1,41 @@
+name: Package and Deploy to S3
+
+on:
+  push:
+    branches:
+      - main  # or any other branch you want to trigger the action
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'  # Specify the Python version you need
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel  # setuptools and wheel are already required for building .whl files
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Copy specific script to S3
+      run: aws s3 cp ./src/data_pipeline/jobs/extract_data_job.py s3://aiyko-data-pipeline-script/extract_data_job.py
+
+    - name: Build Wheel file
+      run: |
+        python setup.py bdist_wheel  # This will generate a .whl file in the dist/ directory
+
+    - name: Upload Wheel package to S3
+      run: aws s3 cp dist/*.whl s3://aiyko-data-pipeline-script/

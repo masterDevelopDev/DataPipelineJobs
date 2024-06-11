@@ -1,0 +1,6 @@
+projectKey=DataPipelineJobs
+serverUrl=http://localhost:9000
+serverVersion=10.5.1.90531
+dashboardUrl=http://localhost:9000/dashboard?id=DataPipelineJobs
+ceTaskId=d707a236-1c91-4b97-9257-0b2cae6f4103
+ceTaskUrl=http://localhost:9000/api/ce/task?id=d707a236-1c91-4b97-9257-0b2cae6f4103
